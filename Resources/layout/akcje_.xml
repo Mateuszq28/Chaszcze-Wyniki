@@ -13,156 +13,36 @@
         android:minHeight="25px"
         android:orientation="vertical"
     >
-        <TextView
-            android:text="Godzina startu:"
-            android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/textView1"
-        />
-        <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-        >
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-            >
-                <Button
-                    android:text="PK 1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button1"
-                    android:onClick="NewGame"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button2"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button3"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button4"
-                    android:layout_margin="2dp"
-                />
-            </TableRow>
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-            >
-                <Button
-                    android:text="PK 5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button5"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button6"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button7"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button8"
-                    android:layout_margin="2dp"
-                />
-            </TableRow>
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-            >
-                <Button
-                    android:text="PK 9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button9"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button10"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 11"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button11"
-                    android:layout_margin="2dp"
-                />
-                <Button
-                    android:text="PK 12"
-                    android:layout_width="wrap_content"
-                    android:layout_height="100.0dp"
-                    android:textSize="20dp"
-                    android:id="@+id/button12"
-                    android:layout_margin="2dp"
-                />
-            </TableRow>
-            <Button
-                android:text="Zakończ"
+        <Button
+                android:text="Dodaj Patrol"
                 android:layout_width="match_parent"
                 android:layout_height="100.0dp"
                 android:textSize="20dp"
-                android:id="@+id/button13"
+                android:id="@+id/btndodaj"
                 android:layout_margin="2dp"
-            />
-            <TextView
-                android:text="Legenda:\nzielony - zebrany Punkt Kontrolny\nżółty - poprawiony Punkt Kontrolny (10)"
-                android:textAlignment="center"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+        />
+        <Button
+                android:text="Powrót do Menu"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/podsumowanie"
-                android:gravity="center_horizontal"
-            />
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_gallery"
-                android:id="@+id/imageView1"
-            />
-        </TableLayout>
+                android:layout_height="100.0dp"
+                android:textSize="20dp"
+                android:id="@+id/btnwroc"
+                android:layout_margin="2dp"
+        />
+        <TextView
+            android:text="Ranking"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:id="@+id/ranking"
+        />
+        <TextView
+            android:text="Lista Patroli"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/listap"
+        />
     </LinearLayout>
 </ScrollView>

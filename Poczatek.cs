@@ -24,22 +24,23 @@ namespace Chaszcze_Wyniki
             SetContentView(Resource.Layout.poczatek_);
 
 
-
-
             //Sprawdź pozwolenia
             string[] PERMISSIONS =
             {
                 "android.permission.READ_EXTERNAL_STORAGE",
-                "android.permission.WRITE_EXTERNAL_STORAGE"
+                "android.permission.WRITE_EXTERNAL_STORAGE",
+                "android.permission.CAMERA"
             };
 
             var permission = ContextCompat.CheckSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE");
             var permissionread = ContextCompat.CheckSelfPermission(this, "android.permission.READ_EXTERNAL_STORAGE");
+            var permissioncamera = ContextCompat.CheckSelfPermission(this, "android.permission.CAMERA");
 
             if (permission != Permission.Granted || permissionread != Permission.Granted)
                 ActivityCompat.RequestPermissions(this, PERMISSIONS, 1);
 
-
+            if (permissioncamera != Permission.Granted)
+                ActivityCompat.RequestPermissions(this, PERMISSIONS, 2);
 
 
             //Przypisz elementy interfejsu do zmiennych
@@ -60,11 +61,36 @@ namespace Chaszcze_Wyniki
                 }
                 else
                 {
-                    var intent = new Intent(this, typeof(Akcje));
-                    StartActivity(intent);
-                    this.Finish();
+                    if (permissioncamera != Permission.Granted)
+                    {
+                        ActivityCompat.RequestPermissions(this, PERMISSIONS, 2);
+                        var intent = new Intent(this, typeof(Poczatek));
+                        Toast.MakeText(this, "Czy na pewno zaakceptowałeś zgody?", ToastLength.Long).Show();
+                        StartActivity(intent);
+                        this.Finish();
+                    }
+                    else
+                    {
+                        //Okno dialogowe potwierdzające zbieranie nowych wyników
+                        Android.App.AlertDialog.Builder dialog = new Android.App.AlertDialog.Builder(this);
+                        Android.App.AlertDialog alert = dialog.Create();
+                        alert.SetTitle("Uwaga!");
+                        alert.SetMessage("Czy na pewno chcesz rozpocząć zbieranie wyników od nowa?");
+                        alert.SetButton("TAK", (c, ev) =>
+                        {
+                            Zarzadzanie.reset();
+                            Zarzadzanie.czyWynikiTrwaja = true;
+                            Zarzadzanie.SaveGame();
+                            var intent = new Intent(this, typeof(Akcje));
+                            StartActivity(intent);
+                            this.Finish();
+                        });
+                        alert.SetButton2("ANULUJ", (c, ev) => { });
+                        alert.Show();
+                    }
                 }
             };
+
 
             Wczytaj.Click += (sender, e) =>
             {
@@ -78,9 +104,20 @@ namespace Chaszcze_Wyniki
                 }
                 else
                 {
-                    var intent = new Intent(this, typeof(Akcje));
-                    StartActivity(intent);
-                    this.Finish();
+                    if (permissioncamera != Permission.Granted)
+                    {
+                        ActivityCompat.RequestPermissions(this, PERMISSIONS, 2);
+                        var intent = new Intent(this, typeof(Poczatek));
+                        Toast.MakeText(this, "Czy na pewno zaakceptowałeś zgody?", ToastLength.Long).Show();
+                        StartActivity(intent);
+                        this.Finish();
+                    }
+                    else
+                    {
+                        var intent = new Intent(this, typeof(Akcje));
+                        StartActivity(intent);
+                        this.Finish();
+                    }
                 }
             };
 
@@ -91,14 +128,22 @@ namespace Chaszcze_Wyniki
             }
             else
             {
-                Zarzadzanie.ReadGame();
-                if (Zarzadzanie.czyGraTrwa)
+                if (permissioncamera != Permission.Granted)
                 {
-                    var intent = new Intent(this, typeof(Akcje));
-                    StartActivity(intent);
-                    this.Finish();
+                    ActivityCompat.RequestPermissions(this, PERMISSIONS, 2);
+                }
+                else
+                {
+                    Zarzadzanie.ReadGame();
+                    if (Zarzadzanie.czyWynikiTrwaja)
+                    {
+                        var intent = new Intent(this, typeof(Akcje));
+                        StartActivity(intent);
+                        this.Finish();
+                    }
                 }
             }
+            
         }
 
 

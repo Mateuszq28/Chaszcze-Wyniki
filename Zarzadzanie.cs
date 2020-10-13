@@ -12,100 +12,73 @@ using Android.Widget;
 
 using System.IO;
 
-namespace Chaszcze
+namespace Chaszcze_Wyniki
 {
     class Zarzadzanie
     {
-        //Zmienne podawane na początku gry
-        static public string nazwaPatrolu;
-        static public DateTime minutaStartowa;
-        static public DateTime czasRozpoczecia;
-
-        //Ważne podczas gry
-        static public List<string> kodyLampionow = new List<string>();
-        static public bool czyGraTrwa = false;
-
-        //Liczone dopiero na koniec gry
-        static public DateTime minutaZakonczenia;
-        static public DateTime czasZakonczenia;
-        static public TimeSpan calkowityCzas;
-        static public int karne;
-
+        static public List<Patrol> danePatroli = new List<Patrol>();
+        static public bool czyWynikiTrwaja = false;
 
         //Stałe wartości
         //Nazwa pliku do zapisywania savów z gry
-        static string nazwaPliku = "zapis_chaszcze.txt";
-        private static TimeSpan limitCzasu = TimeSpan.Parse("02:00");
-        private static TimeSpan limitSpoznien = TimeSpan.Parse("02:45");
-        //Wszystkie kody do lampionów
-        //Pierwsza kolumna to wlasciwy punkt, pozostale to stowarzysze
-        private static string[,] wzorcowka = new string[12, 10] {  { "1-VN", "1-TI", "1-TI", "1-TI", "1-TI", "1-TI", "1-TI", "1-TI", "1-TI", "1-TI" },
-                                                            { "2-WK", "2-JL", "2-JL", "2-JL", "2-JL", "2-JL", "2-JL", "2-JL", "2-JL", "2-JL" },
-                                                            { "3-NA", "3-DE", "3-DE", "3-DE", "3-DE", "3-DE", "3-DE", "3-DE", "3-DE", "3-DE" },
-                                                            { "4-SR", "4-GO", "4-GO", "4-GO", "4-GO", "4-GO", "4-GO", "4-GO", "4-GO", "4-GO" },
-                                                            { "5-MZ", "5-KF", "5-KF", "5-KF", "5-KF", "5-KF", "5-KF", "5-KF", "5-KF", "5-KF" },
-                                                            { "6-BS", "6-PY", "6-PY", "6-PY", "6-PY", "6-PY", "6-PY", "6-PY", "6-PY", "6-PY" },
-                                                            { "7-NJ", "7-BA", "7-UD", "7-UD", "7-UD", "7-UD", "7-UD", "7-UD", "7-UD", "7-UD" },
-                                                            { "8-KS", "8-LT", "8-LT", "8-LT", "8-LT", "8-LT", "8-LT", "8-LT", "8-LT", "8-LT" },
-                                                            { "9-OT", "9-HJ", "9-CI", "9-CI", "9-CI", "9-CI", "9-CI", "9-CI", "9-CI", "9-CI" },
-                                                            { "10-GL", "10-EJ", "10-EJ", "10-EJ", "10-EJ", "10-EJ", "10-EJ", "10-EJ", "10-EJ", "10-EJ" },
-                                                            { "11-KL", "11-MC", "11-MC", "11-MC", "11-MC", "11-MC", "11-MC", "11-MC", "11-MC", "11-MC" },
-                                                            { "12-PB", "12-OZ", "12-OZ", "12-OZ", "12-OZ", "12-OZ", "12-OZ", "12-OZ", "12-OZ", "12-OZ" }};
+        static string nazwaPliku = "wyniki_chaszcze.txt";
+        static string sekwencjaSynchro = "???xxxSTART_SYNCHROxxx???";
 
 
-        //Resetuje grę - czyści zmienne
+        //Resetuje zbieranie wyników
         static public void reset()
         {
-            //Zmienne podawane na początku gry
-            nazwaPatrolu = null;
-            minutaStartowa = DateTime.MinValue;
-            czasRozpoczecia = DateTime.MinValue;
-
-            //Ważne podczas gry
-            kodyLampionow.Clear();
-            czyGraTrwa = false;
-
-            //Liczone dopiero na koniec gry
-            czasZakonczenia = DateTime.MinValue;
-            minutaZakonczenia = DateTime.MinValue;
-            calkowityCzas = TimeSpan.MinValue;
-            karne = 0;
+            Zarzadzanie.czyWynikiTrwaja = false;
+            foreach (Patrol p in danePatroli)
+            {
+                p.kodyLampionow.Clear();
+            }
+            danePatroli.Clear();
         }
 
 
         //Zapisywanie gry do pliku
         //WERSJA TEKSTOWA
-        static public string SaveGeme()
+        static public string SaveGame()
         {
-            string zawartocPliku = nazwaPatrolu;
+            string zawartoscPliku;
+            if (czyWynikiTrwaja) zawartoscPliku = "1";
+            else zawartoscPliku = "0";
+            zawartoscPliku += "\n" + sekwencjaSynchro;
             var backingFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), nazwaPliku);
 
-            if (czyGraTrwa)
+            foreach (Patrol p in danePatroli)
             {
-                zawartocPliku += "\n1";
-            }
-            else
-            {
-                zawartocPliku += "\n0";
-            }
-            zawartocPliku += "\n" + minutaStartowa.ToString("MM.dd.yyyy HH:mm");
-            zawartocPliku += "\n" + czasRozpoczecia.ToString("MM.dd.yyyy HH:mm");
-            zawartocPliku += "\n" + minutaZakonczenia.ToString("MM.dd.yyyy HH:mm");
-            zawartocPliku += "\n" + czasZakonczenia.ToString("MM.dd.yyyy HH:mm");
-            zawartocPliku += "\n" + karne;
-            zawartocPliku += "\n" + calkowityCzas.ToString();
+                zawartoscPliku += "\n" + p.nazwaPatrolu;
+                if (p.czyGraTrwa)
+                {
+                    zawartoscPliku += "\n1";
+                }
+                else
+                {
+                    zawartoscPliku += "\n0";
+                }
+                zawartoscPliku += "\n" + p.minutaStartowa.ToString();
+                zawartoscPliku += "\n" + p.czasRozpoczecia.ToString();
+                zawartoscPliku += "\n" + p.minutaZakonczenia.ToString();
+                zawartoscPliku += "\n" + p.czasZakonczenia.ToString();
+                zawartoscPliku += "\n" + p.karne;
+                zawartoscPliku += "\n" + p.calkowityCzas.ToString();
 
-            foreach (string kod in kodyLampionow)
-            {
-                zawartocPliku += "\n" + kod;
+                foreach (string kod in p.kodyLampionow)
+                {
+                    zawartoscPliku += "\n" + kod;
+                }
+
+                zawartoscPliku += "\n" + sekwencjaSynchro;
             }
 
             using (var writer = File.CreateText(backingFile))
             {
-                writer.Write(zawartocPliku);
+                writer.Write(zawartoscPliku);
             }
 
-            return zawartocPliku;
+            return zawartoscPliku;
         }
 
 
@@ -121,263 +94,165 @@ namespace Chaszcze
                 return null;
             }
 
+            foreach (Patrol p in danePatroli)
+                p.kodyLampionow.Clear();
+            danePatroli.Clear();
+
             using (var reader = new StreamReader(backingFile, true))
             {
                 string line;
-                if ((line = reader.ReadLine()) != null)
-                {
-                    nazwaPatrolu = line;
-                    zawartoscPliku = line;
-                }
-                if ((line = reader.ReadLine()) != null)
-                {
-                    if (line == "1") czyGraTrwa = true;
-                    else czyGraTrwa = false;
+                int i = 0;
 
-                    zawartoscPliku += "\n" + line;
-                }
-                if ((line = reader.ReadLine()) != null)
-                {
-                    zawartoscPliku += "\n" + line;
-                    minutaStartowa = DateTime.Parse(line);
-                }
-                if ((line = reader.ReadLine()) != null)
-                {
-                    zawartoscPliku += "\n" + line;
-                    czasRozpoczecia = DateTime.Parse(line);
-                }
-                if ((line = reader.ReadLine()) != null)
-                {
-                    zawartoscPliku += "\n" + line;
-                    minutaZakonczenia = DateTime.Parse(line);
-                }
-                if ((line = reader.ReadLine()) != null)
-                {
-                    zawartoscPliku += "\n" + line;
-                    czasZakonczenia = DateTime.Parse(line);
-                }
-                if ((line = reader.ReadLine()) != null)
-                {
-                    zawartoscPliku += "\n" + line;
-                    karne = Int32.Parse(line);
-                }
-                if ((line = reader.ReadLine()) != null)
-                {
-                    zawartoscPliku += "\n" + line;
-                    calkowityCzas = TimeSpan.Parse(line);
-                }
+                //wcztanie zmiennej czyWynikiTrwaja
+                line = reader.ReadLine();
 
-                kodyLampionow.Clear();
-                while ((line = reader.ReadLine()) != null)
+                if(line != null)
                 {
-                    zawartoscPliku += "\n" + line;
-                    kodyLampionow.Add(line);
+                    if (line == "1")
+                    {
+                        czyWynikiTrwaja = true;
+                        zawartoscPliku += "1";
+                    }
+                    else
+                    {
+                        czyWynikiTrwaja = false;
+                        zawartoscPliku += "0";
+                    }
+                }
+                //Wczytanie sekwencji synchronizacji
+                line = reader.ReadLine();
+
+                //Czy sekwencja synchronizacji istnieje?
+                while (line != null)
+                {
+                    zawartoscPliku += line;
+
+                    if ((line = reader.ReadLine()) != null)
+                    {
+                        danePatroli.Add(new Patrol());
+                        danePatroli[i].nazwaPatrolu = line;
+                        zawartoscPliku += line;
+
+                        if ((line = reader.ReadLine()) != null)
+                        {
+                            if (line == "1") danePatroli[i].czyGraTrwa = true;
+                            else danePatroli[i].czyGraTrwa = false;
+
+                            zawartoscPliku += "\n" + line;
+                        }
+                        if ((line = reader.ReadLine()) != null)
+                        {
+                            zawartoscPliku += "\n" + line;
+                            danePatroli[i].minutaStartowa = DateTime.Parse(line);
+                        }
+                        if ((line = reader.ReadLine()) != null)
+                        {
+                            zawartoscPliku += "\n" + line;
+                            danePatroli[i].czasRozpoczecia = DateTime.Parse(line);
+                        }
+                        if ((line = reader.ReadLine()) != null)
+                        {
+                            zawartoscPliku += "\n" + line;
+                            danePatroli[i].minutaZakonczenia = DateTime.Parse(line);
+                        }
+                        if ((line = reader.ReadLine()) != null)
+                        {
+                            zawartoscPliku += "\n" + line;
+                            danePatroli[i].czasZakonczenia = DateTime.Parse(line);
+                        }
+                        if ((line = reader.ReadLine()) != null)
+                        {
+                            zawartoscPliku += "\n" + line;
+                            danePatroli[i].karne = Int32.Parse(line);
+                        }
+                        if ((line = reader.ReadLine()) != null)
+                        {
+                            zawartoscPliku += "\n" + line;
+                            danePatroli[i].calkowityCzas = TimeSpan.Parse(line);
+                        }
+
+                        danePatroli[i].kodyLampionow.Clear();
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            if (line != sekwencjaSynchro)
+                            {
+                                zawartoscPliku += "\n" + line;
+                                danePatroli[i].kodyLampionow.Add(line);
+                            }
+                            else break;
+                        }
+                        i++;
+                    }
                 }
             }
-
             return zawartoscPliku;
         }
 
-
-        //Ustaw kolory zgodnie z listą
-        public static void ustawKolory()
+        static private void zamienPatrole(int i, int j)
         {
-            //ile znaleziono odpowiedzi do danego punktu
-            int znaleziono;
+            Patrol temp = danePatroli[i];
+            danePatroli[i] = danePatroli[j];
+            danePatroli[j] = temp;
+        }
 
+        static public void sortujPatrole()
+        {
+            int liczbaPatroli = danePatroli.Count;
+            int najlepszy;
+            int minKarne;
+            TimeSpan minCzas;
 
-            if (czyGraTrwa)
+            for (int i = 0; i < liczbaPatroli; i++)
             {
-                for (int i = 1; i <= 12; i++)
+                najlepszy = i;
+                minKarne = danePatroli[i].karne;
+                minCzas = danePatroli[i].calkowityCzas;
+
+                for (int j = i+1; j < liczbaPatroli; j++)
                 {
-                    znaleziono = kodyLampionow.Count(x => x.StartsWith(i + 1 + "-"));
-                    if (znaleziono == 0)
+                    if (danePatroli[najlepszy].karne > danePatroli[j].karne)
                     {
-                        Akcje.zmienKolor((i + 1).ToString(), "light_gray");
+                        najlepszy = j;
                     }
-                    else if (znaleziono == 1)
+                    else if (danePatroli[najlepszy].karne == danePatroli[j].karne)
                     {
-                        Akcje.zmienKolor((i + 1).ToString(), "green");
-                    }
-                    else
-                    {
-                        Akcje.zmienKolor((i + 1).ToString(), "yellow");
+                        if (danePatroli[najlepszy].calkowityCzas > danePatroli[j].calkowityCzas)
+                        {
+                            najlepszy = j;
+                        }
                     }
                 }
-            }
-            else
-            {
-                //ostatnia odpowiedź na karcie odpowiedzi dla danego punktu
-                string kod;
-                //odwracamy listę, bo brana jest pod uwagę ostatnia odpowiedź
-                kodyLampionow.Reverse();
 
-                //Sprawdzanie poprawności kodów lampionów
-                for (int i = 0; i < 12; i++)
+                if (najlepszy != i)
                 {
-                    znaleziono = kodyLampionow.Count(x => x.StartsWith(i + 1 + "-"));
-
-                    if (znaleziono == 0)
-                    {
-                        //Nie odnotowano żadnego kodu
-                        Akcje.zmienKolor((i + 1).ToString(), "black");
-                    }
-                    else
-                    {
-                        kod = kodyLampionow.Find(x => x.StartsWith(i + 1 + "-"));
-
-                        if (kod == wzorcowka[i, 0])
-                        {
-                            //Prawidłowy lampion
-                            Akcje.zmienKolor((i + 1).ToString(), "green");
-                        }
-                        else
-                        {
-                            for (int j = 1; j < 10; j++)
-                            {
-                                if (kod == wzorcowka[i, j])
-                                {
-                                    //Stowarzyszony
-                                    Akcje.zmienKolor((i + 1).ToString(), "orange");
-                                    break;
-                                }
-                                else if (j == 9)
-                                {
-                                    //Mylny
-                                    Akcje.zmienKolor((i + 1).ToString(), "red");
-                                }
-
-                            }
-                        }
-                    }
+                    zamienPatrole(najlepszy, i);
                 }
             }
         }
 
-
-        //Kończy grę
-        static public string zakonczenie()
+        static public string ranking()
         {
-            //ile znaleziono odpowiedzi do danego punktu
-            int znaleziono;
-            //ostatnia odpowiedź na karcie odpowiedzi dla danego punktu
-            string kod;
-
-            czyGraTrwa = false;
-            karne = 0;
-            //odwracamy listę, bo brana jest pod uwagę ostatnia odpowiedź
-            kodyLampionow.Reverse();
-            czasZakonczenia = DateTime.Now;
-            calkowityCzas = czasZakonczenia - czasRozpoczecia;
-            minutaZakonczenia = minutaStartowa + calkowityCzas;
-
-            //Punkty karne za spóźnienie
-            if (calkowityCzas > limitCzasu)
+            sortujPatrole();
+            string text = "RANKING\n";
+            int i = 1;
+            foreach (Patrol p in danePatroli)
             {
-                if (calkowityCzas > limitSpoznien)
-                {
-                    karne += (limitSpoznien - limitCzasu).Minutes + (calkowityCzas - limitSpoznien).Minutes * 10;
-                }
-                else
-                {
-                    karne += (calkowityCzas - limitCzasu).Minutes;
-                }
+                text += i + ". " + p.nazwaPatrolu + " - " + p.karne + "p. karne - czas: " + p.calkowityCzas + "\n";
+                i++;
             }
-
-            //Sprawdzanie poprawności kodów lampionów
-            for (int i = 0; i < 12; i++)
-            {
-                znaleziono = kodyLampionow.Count(x => x.StartsWith(i + 1 + "-"));
-
-                if (znaleziono == 0)
-                {
-                    //Nie odnotowano żadnego kodu
-                    karne += 90;
-                    Akcje.zmienKolor((i + 1).ToString(), "black");
-                }
-                else
-                {
-                    //Punkty karne za naniesione poprawki
-                    karne += (znaleziono - 1) * 10;
-                    kod = kodyLampionow.Find(x => x.StartsWith(i + 1 + "-"));
-
-                    if (kod == wzorcowka[i, 0])
-                    {
-                        //Prawidłowy lampion
-                        Akcje.zmienKolor((i + 1).ToString(), "green");
-                    }
-                    else
-                    {
-                        for (int j = 1; j < 10; j++)
-                        {
-                            if (kod == wzorcowka[i, j])
-                            {
-                                //Stowarzyszony
-                                karne += 25;
-                                Akcje.zmienKolor((i + 1).ToString(), "orange");
-                                break;
-                            }
-                            else if (j == 9)
-                            {
-                                //Mylny
-                                karne += 90 + 60;
-                                Akcje.zmienKolor((i + 1).ToString(), "red");
-                            }
-
-                        }
-                    }
-                }
-            }
-            //Zapisz grę
-            return SaveGeme();
+            return text;
         }
 
-
-
-
-
-        //Zapisywanie gry do pliku
-        //WERSJA BINARNA
-        /*
-        static public void SaveGemeAsync()
+        static public string drukujPatrole()
         {
-            var backingFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), nazwaPliku);
-            using (BinaryWriter writer = new BinaryWriter(File.Open(backingFile, FileMode.Create)))
+            string text = "SZCZEGÓŁY\n\n";
+            int i = 1;
+            foreach (Patrol p in danePatroli)
             {
-                writer.Write(Zarzadzanie.nazwaPatrolu);
-                writer.Write(Zarzadzanie.czyGraTrwa);
-                writer.Write(Zarzadzanie.minutaStartowa.ToBinary());
-                writer.Write(Zarzadzanie.czasRozpoczecia.ToBinary());
+                text += i + ". miejsce\n" + p.drukuj() + "\n\n";
+                i++;
             }
+            return text;
         }
-        */
-
-
-        //Funkcja wczytuje grę z pliku tekstowego o nazwie 'nazwaPliku'
-        //WERSJA BINARNA
-        /*
-        public static bool ReadGameAsync()
-        {
-            var backingFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), nazwaPliku);
-
-            if (backingFile == null || !File.Exists(backingFile))
-            {
-                return false;
-            }
-
-            using (BinaryReader reader = new BinaryReader(File.Open(backingFile, FileMode.Open)))
-            {
-                string line;
-                if ((line = reader.ReadString()) != null)
-                {
-                    Zarzadzanie.nazwaPatrolu = line;
-                    Zarzadzanie.czyGraTrwa = reader.ReadBoolean();
-                    Zarzadzanie.minutaStartowa = DateTime.FromBinary(reader.ReadInt64());
-                    Zarzadzanie.czasRozpoczecia = DateTime.FromBinary(reader.ReadInt64());
-                }
-            }
-
-            return true;
-        }*/
     }
 }
