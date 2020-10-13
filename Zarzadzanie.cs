@@ -12,6 +12,9 @@ using Android.Widget;
 
 using System.IO;
 
+//do formatowania dat
+using System.Globalization;
+
 namespace Chaszcze_Wyniki
 {
     class Zarzadzanie
@@ -41,6 +44,11 @@ namespace Chaszcze_Wyniki
         //WERSJA TEKSTOWA
         static public string SaveGame()
         {
+            //Do rozpoznawania formatu daty
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            string formatData = "dd.MM.yyyy HH:mm:ss";
+            string formatGodzina = "HH:mm";
+
             string zawartoscPliku;
             if (czyWynikiTrwaja) zawartoscPliku = "1";
             else zawartoscPliku = "0";
@@ -58,12 +66,12 @@ namespace Chaszcze_Wyniki
                 {
                     zawartoscPliku += "\n0";
                 }
-                zawartoscPliku += "\n" + p.minutaStartowa.ToString();
-                zawartoscPliku += "\n" + p.czasRozpoczecia.ToString();
-                zawartoscPliku += "\n" + p.minutaZakonczenia.ToString();
-                zawartoscPliku += "\n" + p.czasZakonczenia.ToString();
+                zawartoscPliku += "\n" + p.minutaStartowa.ToString(formatData, provider);
+                zawartoscPliku += "\n" + p.czasRozpoczecia.ToString(formatData, provider);
+                zawartoscPliku += "\n" + p.minutaZakonczenia.ToString(formatData, provider);
+                zawartoscPliku += "\n" + p.czasZakonczenia.ToString(formatData, provider);
                 zawartoscPliku += "\n" + p.karne;
-                zawartoscPliku += "\n" + p.calkowityCzas.ToString();
+                zawartoscPliku += "\n" + p.calkowityCzas.ToString(formatGodzina, provider);
 
                 foreach (string kod in p.kodyLampionow)
                 {
@@ -88,6 +96,11 @@ namespace Chaszcze_Wyniki
         {
             var backingFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), nazwaPliku);
             string zawartoscPliku = "";
+
+            //Do rozpoznawania formatu daty
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            string formatData = "dd.MM.yyyy HH:mm:ss";
+            string formatGodzina = "HH:mm";
 
             if (backingFile == null || !File.Exists(backingFile))
             {
@@ -143,22 +156,22 @@ namespace Chaszcze_Wyniki
                         if ((line = reader.ReadLine()) != null)
                         {
                             zawartoscPliku += "\n" + line;
-                            danePatroli[i].minutaStartowa = DateTime.Parse(line);
+                            danePatroli[i].minutaStartowa = DateTime.ParseExact(line, formatData, provider);
                         }
                         if ((line = reader.ReadLine()) != null)
                         {
                             zawartoscPliku += "\n" + line;
-                            danePatroli[i].czasRozpoczecia = DateTime.Parse(line);
+                            danePatroli[i].czasRozpoczecia = DateTime.ParseExact(line, formatData, provider);
                         }
                         if ((line = reader.ReadLine()) != null)
                         {
                             zawartoscPliku += "\n" + line;
-                            danePatroli[i].minutaZakonczenia = DateTime.Parse(line);
+                            danePatroli[i].minutaZakonczenia = DateTime.ParseExact(line, formatData, provider);
                         }
                         if ((line = reader.ReadLine()) != null)
                         {
                             zawartoscPliku += "\n" + line;
-                            danePatroli[i].czasZakonczenia = DateTime.Parse(line);
+                            danePatroli[i].czasZakonczenia = DateTime.ParseExact(line, formatData, provider);
                         }
                         if ((line = reader.ReadLine()) != null)
                         {
@@ -168,7 +181,7 @@ namespace Chaszcze_Wyniki
                         if ((line = reader.ReadLine()) != null)
                         {
                             zawartoscPliku += "\n" + line;
-                            danePatroli[i].calkowityCzas = TimeSpan.Parse(line);
+                            danePatroli[i].calkowityCzas = TimeSpan.ParseExact(line, formatGodzina, provider);
                         }
 
                         danePatroli[i].kodyLampionow.Clear();
