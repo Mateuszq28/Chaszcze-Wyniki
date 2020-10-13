@@ -95,7 +95,7 @@ namespace Chaszcze_Wyniki
             if ((line = reader.ReadLine()) != null)
             {
                 zawartoscPliku += "\n" + line;
-                calkowityCzas = TimeSpan.ParseExact(line, formatGodzina, provider);
+                calkowityCzas = TimeSpan.Parse(line);
             }
 
             kodyLampionow.Clear();
@@ -112,7 +112,7 @@ namespace Chaszcze_Wyniki
             //Do rozpoznawania formatu daty
             CultureInfo provider = CultureInfo.InvariantCulture;
             string formatData = "dd.MM.yyyy HH:mm:ss";
-            string formatGodzina = "HH:mm";
+            string formatGodzina = "HH:mm:ss";
 
             string text = "";
 
@@ -121,7 +121,7 @@ namespace Chaszcze_Wyniki
             text += "\nCzas rozpoczęcia: " + czasRozpoczecia.ToString(formatData, provider);
             text += "\nMinuta zakończenia: " + minutaZakonczenia.ToString(formatData, provider);
             text += "\nCzas zakończenia: " + czasZakonczenia.ToString(formatData, provider);
-            text += "\nCałkowity czas przejścia: " + calkowityCzas.ToString(formatGodzina, provider);
+            text += "\nCałkowity czas przejścia: " + (DateTime.MinValue + calkowityCzas).ToString(formatGodzina, provider);
             if (czyGraTrwa) text += "\nGRA DALEJ TRWA";
             else text += "\nGRA ZAKOŃCZONA";
             text += "\nPunkty karne: " + karne;

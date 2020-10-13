@@ -71,7 +71,7 @@ namespace Chaszcze_Wyniki
                 zawartoscPliku += "\n" + p.minutaZakonczenia.ToString(formatData, provider);
                 zawartoscPliku += "\n" + p.czasZakonczenia.ToString(formatData, provider);
                 zawartoscPliku += "\n" + p.karne;
-                zawartoscPliku += "\n" + p.calkowityCzas.ToString(formatGodzina, provider);
+                zawartoscPliku += "\n" + p.calkowityCzas.ToString();
 
                 foreach (string kod in p.kodyLampionow)
                 {
@@ -181,7 +181,7 @@ namespace Chaszcze_Wyniki
                         if ((line = reader.ReadLine()) != null)
                         {
                             zawartoscPliku += "\n" + line;
-                            danePatroli[i].calkowityCzas = TimeSpan.ParseExact(line, formatGodzina, provider);
+                            danePatroli[i].calkowityCzas = TimeSpan.Parse(line);
                         }
 
                         danePatroli[i].kodyLampionow.Clear();
@@ -245,12 +245,17 @@ namespace Chaszcze_Wyniki
 
         static public string ranking()
         {
+            //Do rozpoznawania formatu daty
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            string formatData = "dd.MM.yyyy HH:mm:ss";
+            string formatGodzina = "HH:mm:ss";
+
             sortujPatrole();
             string text = "RANKING\n";
             int i = 1;
             foreach (Patrol p in danePatroli)
             {
-                text += i + ". " + p.nazwaPatrolu + " - " + p.karne + "p. karne - czas: " + p.calkowityCzas + "\n";
+                text += i + ". " + p.nazwaPatrolu + " - " + p.karne + "p. karne - czas: " + (DateTime.MinValue + p.calkowityCzas).ToString(formatGodzina, provider) + "\n";
                 i++;
             }
             return text;
