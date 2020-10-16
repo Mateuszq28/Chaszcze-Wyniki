@@ -29,6 +29,14 @@
                 android:id="@+id/btnwroc"
                 android:layout_margin="2dp"
         />
+        <Button
+                android:text="Generuj Arkusz Kalkulacyjny"
+                android:layout_width="match_parent"
+                android:layout_height="100.0dp"
+                android:textSize="20dp"
+                android:id="@+id/btn_excel"
+                android:layout_margin="2dp"
+        />
         <TextView
             android:text="Ranking"
             android:textAppearance="?android:attr/textAppearanceMedium"

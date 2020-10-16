@@ -15,6 +15,9 @@ using System.IO;
 //do formatowania dat
 using System.Globalization;
 
+//Generowanie excela
+using Syncfusion.XlsIO;
+
 namespace Chaszcze_Wyniki
 {
     class Zarzadzanie
@@ -26,6 +29,11 @@ namespace Chaszcze_Wyniki
         //Nazwa pliku do zapisywania savów z gry
         static string nazwaPliku = "wyniki_chaszcze.txt";
         static string sekwencjaSynchro = "???xxxSTART_SYNCHROxxx???";
+
+        //Do rozpoznawania formatu daty
+        static CultureInfo provider = CultureInfo.InvariantCulture;
+        static string formatData = "dd.MM.yyyy HH:mm:ss";
+        static string formatGodzina = "HH:mm";
 
 
         //Resetuje zbieranie wyników
@@ -44,11 +52,6 @@ namespace Chaszcze_Wyniki
         //WERSJA TEKSTOWA
         static public string SaveGame()
         {
-            //Do rozpoznawania formatu daty
-            CultureInfo provider = CultureInfo.InvariantCulture;
-            string formatData = "dd.MM.yyyy HH:mm:ss";
-            string formatGodzina = "HH:mm";
-
             string zawartoscPliku;
             if (czyWynikiTrwaja) zawartoscPliku = "1";
             else zawartoscPliku = "0";
@@ -96,11 +99,6 @@ namespace Chaszcze_Wyniki
         {
             var backingFile = System.IO.Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), nazwaPliku);
             string zawartoscPliku = "";
-
-            //Do rozpoznawania formatu daty
-            CultureInfo provider = CultureInfo.InvariantCulture;
-            string formatData = "dd.MM.yyyy HH:mm:ss";
-            string formatGodzina = "HH:mm";
 
             if (backingFile == null || !File.Exists(backingFile))
             {
@@ -272,5 +270,49 @@ namespace Chaszcze_Wyniki
             }
             return text;
         }
+
+
+        public static void wyslijExcel(ref IWorksheet worksheet)
+        {
+            int licznik_rzad = 1;
+            int licznik_lamp;
+
+            worksheet.Range[licznik_rzad, 1].Text = "Miejsce";
+            worksheet.Range[licznik_rzad, 2].Text = "Nazwa";
+            worksheet.Range[licznik_rzad, 3].Text = "Minuta startowa";
+            worksheet.Range[licznik_rzad, 4].Text = "Czas rozpoczęcia";
+            worksheet.Range[licznik_rzad, 5].Text = "Minuta zakończenia";
+            worksheet.Range[licznik_rzad, 6].Text = "Czas zakończenia";
+            worksheet.Range[licznik_rzad, 7].Text = "Całkowity czas przejścia";
+            worksheet.Range[licznik_rzad, 8].Text = "Stan gry";
+            worksheet.Range[licznik_rzad, 9].Text = "Punkty karne";
+            worksheet.Range[licznik_rzad, 11].Text = "Spisane lampiony:";
+
+            licznik_rzad++;
+
+            foreach (Patrol p in danePatroli)
+            {
+                worksheet.Range[licznik_rzad, 1].Text = (licznik_rzad - 1).ToString();
+                worksheet.Range[licznik_rzad, 2].Text = p.nazwaPatrolu;
+                worksheet.Range[licznik_rzad, 3].Text = p.minutaStartowa.ToString(formatData, provider);
+                worksheet.Range[licznik_rzad, 4].Text = p.czasRozpoczecia.ToString(formatData, provider);
+                worksheet.Range[licznik_rzad, 5].Text = p.minutaZakonczenia.ToString(formatData, provider);
+                worksheet.Range[licznik_rzad, 6].Text = p.czasZakonczenia.ToString(formatData, provider);
+                worksheet.Range[licznik_rzad, 7].Text = (DateTime.MinValue + p.calkowityCzas).ToString(formatData, provider);
+                worksheet.Range[licznik_rzad, 8].Text = p.czyGraTrwa.ToString();
+                worksheet.Range[licznik_rzad, 9].Text = p.karne.ToString();
+
+                licznik_lamp = 11;
+                foreach (string kod in p.kodyLampionow)
+                {
+                    worksheet.Range[licznik_rzad , licznik_lamp].Text = kod;
+                    licznik_lamp++;
+                }
+
+                licznik_rzad++;
+            }
+
+        }
+
     }
 }
